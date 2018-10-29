@@ -7,6 +7,19 @@ const int pinsLED[9] = {1,2,3,4,5,6,7,8,9};
 // Initiate counter
 int i;
 
+// Stimulus vectors
+const int vecStim[8][9] = 
+{
+  {1,2,3,4,5,6,7,8,9},
+  {1,4,7,2,5,8,3,6,9},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {}
+};
+
 // ::::::: Setup :::::::
 void setup() {
   // Open serial port
@@ -27,5 +40,5 @@ void setup() {
 
 // ::::::: Loop :::::::
 void loop() {
-  // put your main code here, to run repeatedly:
+  
 }
