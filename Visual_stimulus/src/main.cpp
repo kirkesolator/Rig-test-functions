@@ -1,4 +1,5 @@
 #include <Arduino.h>
+// ::::::: Pin definitions::::::
 
 // LED pins on board that controls the 9px TV. Make sure it's correct!
 const int pinsLED[9] = {1,2,3,4,5,6,7,8,9};
@@ -6,6 +7,7 @@ const int pinsLED[9] = {1,2,3,4,5,6,7,8,9};
 // Initiate counter
 int i;
 
+// ::::::: Setup :::::::
 void setup() {
   // Open serial port
   Serial.begin(9600);
@@ -22,6 +24,8 @@ void setup() {
   while (! Serial);
 }
 
+
+// ::::::: Loop :::::::
 void loop() {
   // put your main code here, to run repeatedly:
 }
