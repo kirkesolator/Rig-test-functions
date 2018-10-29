@@ -2,16 +2,17 @@
 // ::::::: PIN DEF :::::::::::::: PIN DEF :::::::::::::: PIN DEF :::::::::::::: PIN DEF :::::::::::::: PIN DEF :::::::
 
 // -----LED pins on board that controls the 9px TV. Make sure it's correct!-----
-const int pinsLED[9] = {1,2,3,4,5,6,7,8,9};
+const int pinsLED[9] = {11,12,13,14,15,16,17,18,19};
 
 // -----Initiate counter-----
 int i;
+int j;
 unsigned int counter = 0;
 const int nStim = 9;
 
 // -----ITI-----
 const int tITI = 1000;
-const int blockSize = 10;
+const int blockSize = 8;
 
 // -----stimulus step time-----
 const int tS1 = 100;
@@ -28,6 +29,8 @@ const int vecStim[8][9] =
   {7,4,1,8,5,2,9,6,3},
   {7,8,9,4,5,6,1,2,3}
 };
+int vecPins[8][9];
+
 int S1pins[nStim];
 
 // -----Timer parameters-----
@@ -49,7 +52,7 @@ void transition(int n)
 // f(output pin toggle)-----
 void output(int ppins[], int n, char direction)
 {
-  for(int i = 0; i < n; i++)
+  for(i = 0; i < n; i++)
   {
     digitalWrite(ppins[i], direction);
   }
@@ -71,6 +74,11 @@ void setup() {
   // Get pin n
   int nPins = sizeof(pinsLED)/sizeof(pinsLED[0]);
   
+  for(int i = 0; i < 8; i++){
+    for(int j = 0; j < 9; j++){
+      vecPins[i][j] = pinsLED[vecStim[i][j]-1];
+    }
+  }
   // Set pinmodes to output
   for (i = 0; i <= nPins; i++)
   {
@@ -84,9 +92,8 @@ void setup() {
 // ::::::: Loop :::::::::::::: Loop :::::::::::::: Loop :::::::::::::: Loop :::::::::::::: Loop :::::::
 void loop() {
   // Run block
-  
   // Cycle through all the trials in this block
-  for(int trials = 0; blockSize; trials++)
+  for(int trials = 0; trials < blockSize; trials++)
   {
     // ..........Timer..........
     if (millis() - pTimer >= tTimer)
@@ -101,6 +108,7 @@ void loop() {
       case 0: // ITI timer start
         bgtimer(tITI); // Start timer
         transition(1); // Advance state index
+        break;
       case 1: // S1 stimulus ON
         if (counter == nStim)
         {
@@ -111,18 +119,19 @@ void loop() {
           break;
         }
         bgtimer(tS1); // Start timer
-        counter++;
-        pinMode(S1pins[counter], HIGH); // activate(pins);
+        digitalWrite(S1pins[counter], HIGH); // activate(pins);
         transition(1); // Advance state index
-        
+        counter++;
+        break;
       case 2: //New block, define S1pins
-        for (i = 0; nStim; i++)
+        for (i = 0; i < nStim; i++)
         {
-          S1pins[i] = vecStim[trials][i];
+          S1pins[i] = vecPins[trials][i];
         }
+        //Serial.println(' ');
         transition(0); // Advance state index
       default: // Default stay out of switches
         break;
     }
   }
-  }
+}
