@@ -1,10 +1,10 @@
 #include <Arduino.h>
-// ::::::: PIN DEF :::::::::::::: PIN DEF :::::::::::::: PIN DEF :::::::::::::: PIN DEF :::::::::::::: PIN DEF :::::::
 
+// ::::::: PIN DEF :::::::::::::: PIN DEF :::::::::::::: PIN DEF :::::::::::::: PIN DEF :::::::::::::: PIN DEF :::::::
 // -----LED pins on board that controls the 9px TV. Make sure it's correct!-----
 const int pinsLED[9] = {11,12,13,14,15,16,17,18,19};
 
-// -----Initiate counter-----
+// -----Initialize-----
 int i;
 int j;
 unsigned int counter = 0;
@@ -14,12 +14,11 @@ const int nStim = 9;
 const int tITI = 500;
 const int blockSize = 8;
 
-// -----stimulus step time-----
+// -----Stimulus step time-----
 const int tS1 = 150;
 
-// -----Stimulus vectors (modulus snake patterns)-----
-const int vecStim[8][9] = 
-{
+// -----Stimulus vectors (modulo snake patterns)-----
+const int vecStim[blockSize][nStim] = {
   {1,2,3,4,5,6,7,8,9},
   {1,4,7,2,5,8,3,6,9},
   {3,2,1,6,5,4,9,8,7},
@@ -29,8 +28,7 @@ const int vecStim[8][9] =
   {7,4,1,8,5,2,9,6,3},
   {7,8,9,4,5,6,1,2,3}
 };
-int vecPins[8][9];
-
+int vecPins[blockSize][nStim];
 int S1pins[nStim];
 
 // -----Timer parameters-----
@@ -69,12 +67,11 @@ void bgtimer(int tDur)
 void setup() {
   // Open serial port
   Serial.begin(9600);
-  
   // Get pin n
   int nPins = sizeof(pinsLED)/sizeof(pinsLED[0]);
-  
-  for(int i = 0; i < 8; i++){
-    for(int j = 0; j < 9; j++){
+  // Assign pins to the different stimuli
+  for(int i = 0; i < blockSize; i++){
+    for(int j = 0; j < nStim; j++){
       vecPins[i][j] = pinsLED[vecStim[i][j]-1];
     }
   }
@@ -83,7 +80,7 @@ void setup() {
     pinMode(pinsLED[i],OUTPUT);
   }
   // Wait with next stage until serial monitor is running
-  while (! Serial);
+  while (!Serial);
 }
 
 
@@ -104,12 +101,12 @@ void loop() {
       transition(1); // Advance state index
       Serial.print("0");
       break;
-    case 1: // S1 stimulus ON
+    case 1: // Stimulus ON
       if (counter == nStim){
         counter = 0;
         transition(2); // Advance state index
         state = nextstate;
-        output(S1pins,9,LOW);
+        output(S1pins,nStim,LOW);
         break;
       }
       bgtimer(tS1); // Start timer
@@ -118,7 +115,7 @@ void loop() {
       counter++;
       Serial.print("1");
       break;
-    case 2: //New block, define S1pins
+    case 2: // New stimulus, define S1pins
       for (i = 0; i < nStim; i++){
         S1pins[i] = vecPins[trials][i];
       }
