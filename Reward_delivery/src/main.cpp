@@ -13,6 +13,7 @@ bool doBreak = false;
 int state = 0;
 int nextstate = 0;
 
+int counter = 0;
 int incomingByte = 0;   // for incoming serial data
 
 // -----Timer parameters-----
@@ -65,6 +66,11 @@ void loop() {
     // Show key press (uncomment to see in serial monitor)
     // Serial.println(incomingByte, DEC);
     
+    // Reset reward counter via "c" key
+    if (incomingByte == 99){
+      counter = 0;
+      Serial.println("Reward counter reset to zero");
+    }
     // Increase or decrease reward amount via "m" and "l" keys respectively
     if (incomingByte == 109){
       tReward += 10;
@@ -120,6 +126,9 @@ void loop() {
        break;
       case 1: // Stop reward
         digitalWrite(pinReward,LOW);
+        counter += 1;
+        Serial.print("Rewards so far: ");
+        Serial.println(counter);
         if (doBreak){
           doRun = false;
           doBreak = false;
