@@ -6,6 +6,10 @@
 		{
 			"path": "Visual_stimulus",
 			"name": "Visual_stimulus"
+		},
+		{
+			"path": "Reward_delivery",
+			"name": "Reward_delivery"
 		}
 	],
 	"settings": {

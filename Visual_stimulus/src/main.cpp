@@ -11,11 +11,11 @@ unsigned int counter = 0;
 const int nStim = 9;
 
 // -----ITI-----
-const int tITI = 1000;
+const int tITI = 500;
 const int blockSize = 8;
 
 // -----stimulus step time-----
-const int tS1 = 100;
+const int tS1 = 150;
 
 // -----Stimulus vectors (modulus snake patterns)-----
 const int vecStim[8][9] = 
@@ -115,7 +115,6 @@ void loop() {
         transition(2); // Advance state index
         state = nextstate;
         output(S1pins,9,LOW);
-        Serial.print(trials);
         break;
       }
       bgtimer(tS1); // Start timer
@@ -131,6 +130,8 @@ void loop() {
       }
       transition(0); // Advance state index
       Serial.println("2");
+      Serial.print(trials);
+      Serial.print(":");
       trials++;
       if (trials == blockSize)
       {
