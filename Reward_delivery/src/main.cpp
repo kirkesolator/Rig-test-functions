@@ -1,4 +1,5 @@
 #include <Arduino.h>
+//:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:PARAMETERS:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:
 // -----Important, make sure pin is correct!!!-----
 const unsigned int pinReward = 11;
 
@@ -14,7 +15,7 @@ int state = 0;
 int nextstate = 0;
 
 int counter = 0;
-int incomingByte = 0;   // for incoming serial data
+int incomingByte = 0;
 
 // -----Timer parameters-----
 unsigned long pTimer;
@@ -22,26 +23,27 @@ unsigned long tTimer;
 bool doTime = false;
 
 
-//::::::::::::::::::FUNCTIONS::::::::::::::::::::::
+//:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:FUNCTIONS:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:
 // f(background timer)-----
-void bgtimer(int tDur)
-{
+void bgtimer(int tDur){
   doTime = true;
   pTimer = millis();
   tTimer = tDur;
 }
 
 // f(state transition)-----
-void transition(int n)
-{
+void transition(int n){
   state = -1;     // Reset state to default
   nextstate = n;  // Advance state index
 }
 
+
+//:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:SETUP:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:
 void setup() {
   Serial.begin(9600);     // opens serial port, sets data rate to 9600 bps
 }
 
+//:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:LOOP:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:
 void loop() {
   pinMode(pinReward,OUTPUT);
 
@@ -49,7 +51,7 @@ void loop() {
   if (Serial.available() > 0) {
     // read the incoming byte:
     incomingByte = Serial.read();
-    
+
     // Start/stop reward delivery via SPACE BAR
     if (incomingByte == 32){
       doRun = !doRun;
@@ -63,15 +65,10 @@ void loop() {
       }
     }
     
-    // Show key press (uncomment to see in serial monitor)
+    // Show key press (uncomment to see in serial monitor):
     // Serial.println(incomingByte, DEC);
     
-    // Reset reward counter via "c" key
-    if (incomingByte == 99){
-      counter = 0;
-      Serial.println("Reward counter reset to zero");
-    }
-    // Increase or decrease reward amount via "m" and "l" keys respectively
+    // Increase or decrease reward amount via "m" (for MORE) and "l" (for LESS) keys respectively
     if (incomingByte == 109){
       tReward += 10;
       Serial.print("Reward delivery now: ");
@@ -84,8 +81,7 @@ void loop() {
       Serial.print(tReward);
       Serial.println("ms");
     }
-
-    // Increase or decrease inter-reward interval via "s" and "f" keys respectively
+    // Increase or decrease inter-reward interval via "s" (for SLOWER) and "f" (for FASTER) keys respectively
     if (incomingByte == 102){
       tIRI -= 50;
       Serial.print("Inter-reward interval now: ");
@@ -98,8 +94,7 @@ void loop() {
       Serial.print(tIRI);
       Serial.println("ms");
     }
-
-    // Manual reward delivery via "r" key
+    // Manual reward delivery via "r" (for REWARD) key
     if (incomingByte == 114){
       doRun = true;
       doBreak = true;
@@ -107,17 +102,24 @@ void loop() {
       doTime = false;
       Serial.println("Reward delivered manually");
     }
+    // Reset reward counter via "c" (for crab juice) key
+    if (incomingByte == 99){
+      counter = 0;
+      Serial.println("Reward counter reset to zero");
+    }
   }
   
+  // In active state:
   if (doRun){
-    // ..........Timer..........
+    //..........Timer..........
       if (doTime){
         if (millis() - pTimer >= tTimer)
         {
           state = nextstate; // Trigger state transition via switch cases below
-          doTime = false; // Reset timer
+          doTime = false; // Switch off timer
         }
       }
+    //..........Switch cases to control reward delivery stages..........
     switch (state){
       case 0: // Start reward
         bgtimer(tReward); // Start timer
