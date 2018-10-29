@@ -44,8 +44,7 @@ int trials = 0;
 
 //::::::: FUNCTIONS :::::::::::::: FUNCTIONS :::::::::::::: FUNCTIONS :::::::::::::: FUNCTIONS :::::::
 // f(state transition)-----
-void transition(int n)
-{
+void transition(int n){
   state = -1;     // Reset state to default
   nextstate = n;  // Advance state index
 }
@@ -53,8 +52,7 @@ void transition(int n)
 // f(output pin toggle)-----
 void output(int ppins[], int n, char direction)
 {
-  for(i = 0; i < n; i++)
-  {
+  for(i = 0; i < n; i++){
     digitalWrite(ppins[i], direction);
   }
 }
@@ -81,8 +79,7 @@ void setup() {
     }
   }
   // Set pinmodes to output
-  for (i = 0; i <= nPins; i++)
-  {
+  for (i = 0; i <= nPins; i++){
     pinMode(pinsLED[i],OUTPUT);
   }
   // Wait with next stage until serial monitor is running
@@ -94,8 +91,7 @@ void setup() {
 void loop() {
   // Run block
   // ..........Timer..........
-  if (millis() - pTimer >= tTimer)
-  {
+  if (millis() - pTimer >= tTimer){
     state = nextstate; // Trigger state transition via switch cases below
     doTime = false; // Reset timer
   }
@@ -109,8 +105,7 @@ void loop() {
       Serial.print("0");
       break;
     case 1: // S1 stimulus ON
-      if (counter == nStim)
-      {
+      if (counter == nStim){
         counter = 0;
         transition(2); // Advance state index
         state = nextstate;
@@ -124,8 +119,7 @@ void loop() {
       Serial.print("1");
       break;
     case 2: //New block, define S1pins
-      for (i = 0; i < nStim; i++)
-      {
+      for (i = 0; i < nStim; i++){
         S1pins[i] = vecPins[trials][i];
       }
       transition(0); // Advance state index
@@ -133,8 +127,7 @@ void loop() {
       Serial.print(trials);
       Serial.print(":");
       trials++;
-      if (trials == blockSize)
-      {
+      if (trials == blockSize){
         trials = 0;
       }
     default: // Default stay out of switches
