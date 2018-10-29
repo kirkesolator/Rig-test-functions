@@ -40,6 +40,7 @@ bool doTime = false;
 
 int state = 2; // Start with defining S1pins at beginning of block
 int nextstate = 0;
+int trials = 0;
 
 //::::::: FUNCTIONS :::::::::::::: FUNCTIONS :::::::::::::: FUNCTIONS :::::::::::::: FUNCTIONS :::::::
 // f(state transition)-----
@@ -92,46 +93,50 @@ void setup() {
 // ::::::: Loop :::::::::::::: Loop :::::::::::::: Loop :::::::::::::: Loop :::::::::::::: Loop :::::::
 void loop() {
   // Run block
-  // Cycle through all the trials in this block
-  for(int trials = 0; trials < blockSize; trials++)
+  // ..........Timer..........
+  if (millis() - pTimer >= tTimer)
   {
-    // ..........Timer..........
-    if (millis() - pTimer >= tTimer)
-    {
-      state = nextstate; // Trigger state transition via switch cases below
-      doTime = false; // Reset timer
-    }
+    state = nextstate; // Trigger state transition via switch cases below
+    doTime = false; // Reset timer
+  }
 
   // ******************** State transitions ********************
-    switch (state)
-    {
-      case 0: // ITI timer start
-        bgtimer(tITI); // Start timer
-        transition(1); // Advance state index
+  switch (state)
+  {
+    case 0: // ITI timer start
+      bgtimer(tITI); // Start timer
+      transition(1); // Advance state index
+      Serial.print("0");
+      break;
+    case 1: // S1 stimulus ON
+      if (counter == nStim)
+      {
+        counter = 0;
+        transition(2); // Advance state index
+        state = nextstate;
+        output(S1pins,9,LOW);
+        Serial.print(trials);
         break;
-      case 1: // S1 stimulus ON
-        if (counter == nStim)
-        {
-          counter = 0;
-          transition(2); // Advance state index
-          state = nextstate;
-          output(S1pins,9,LOW);
-          break;
-        }
-        bgtimer(tS1); // Start timer
-        digitalWrite(S1pins[counter], HIGH); // activate(pins);
-        transition(1); // Advance state index
-        counter++;
-        break;
-      case 2: //New block, define S1pins
-        for (i = 0; i < nStim; i++)
-        {
-          S1pins[i] = vecPins[trials][i];
-        }
-        //Serial.println(' ');
-        transition(0); // Advance state index
-      default: // Default stay out of switches
-        break;
-    }
+      }
+      bgtimer(tS1); // Start timer
+      digitalWrite(S1pins[counter], HIGH); // activate(pins);
+      transition(1); // Advance state index
+      counter++;
+      Serial.print("1");
+      break;
+    case 2: //New block, define S1pins
+      for (i = 0; i < nStim; i++)
+      {
+        S1pins[i] = vecPins[trials][i];
+      }
+      transition(0); // Advance state index
+      Serial.println("2");
+      trials++;
+      if (trials == blockSize)
+      {
+        trials = 0;
+      }
+    default: // Default stay out of switches
+      break;
   }
 }
