@@ -41,13 +41,12 @@ void transition(int n){
 //:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:SETUP:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:
 void setup() {
   Serial.begin(9600);     // opens serial port, sets data rate to 9600 bps
+  pinMode(pinReward,OUTPUT); // Set pin to output
 }
 
 //:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:LOOP:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:
 void loop() {
-  pinMode(pinReward,OUTPUT);
-
-  // send data only when you receive data:
+  // ........Serial communication..........
   if (Serial.available() > 0) {
     // read the incoming byte:
     incomingByte = Serial.read();
@@ -109,7 +108,7 @@ void loop() {
     }
   }
   
-  // In active state:
+  // ........State progression........
   if (doRun){
     //..........Timer..........
       if (doTime){
