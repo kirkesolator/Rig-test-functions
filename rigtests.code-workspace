@@ -10,6 +10,10 @@
 		{
 			"path": "Reward_delivery",
 			"name": "Reward_delivery"
+		},
+		{
+			"path": "Script_template",
+			"name": "Script_template"
 		}
 	],
 	"settings": {
