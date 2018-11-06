@@ -120,6 +120,7 @@ void loop() {
         doRun = false;
       }
     }
+  }
   if (doRun){
     // ..........Timer..........
         if(doTime){
