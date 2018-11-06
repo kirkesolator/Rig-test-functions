@@ -26,7 +26,12 @@ const int defaultStim = 1;
 unsigned long pTimer;
 unsigned long tTimer;
 bool doTime = true;
- 
+
+// -----Run/serial parameters-----
+bool doRun = false;
+int incomingByte = 0;
+const int bRate = 9600;
+
 // -----State parameters-----
 int state = 0; // Starting state
 int nextstate;
@@ -86,7 +91,7 @@ void mapoutpins(int outPins[],int stimPins[4][nStim],int odorPins[4][nStim],int 
 //..
 void setup() {
   // Start serial killing
-  Serial.begin(9600);
+  Serial.begin(bRate);
 
   // Map output pins onto simulus matrix
   mapoutpins(outPins,stimPins,odorPins,nStim);
@@ -104,44 +109,63 @@ void setup() {
 //..
 //..
 void loop() {
-  // ..........Timer..........
-      if(doTime){
-        if (millis() - pTimer >= tTimer){
-          state = nextstate; // Trigger state transition via switch cases below
-          doTime = false; // Reset timer
+  // Check for start/stop input from serial monitor:
+  if (Serial.available() > 0) {
+    // Read the incoming byte
+    incomingByte = Serial.read();
+
+    // Start/stop reward delivery via SPACE BAR
+    if (incomingByte == 32){
+      doRun = !doRun;
+      if (doRun){
+        Serial.println("Odor deliver started");
+        doRun = true;
+      }
+      else{
+        Serial.println("Odor deliver stopped");
+        doRun = false;
+      }
+    }
+  if (doRun){
+    // ..........Timer..........
+        if(doTime){
+          if (millis() - pTimer >= tTimer){
+            state = nextstate; // Trigger state transition via switch cases below
+            doTime = false; // Reset timer
+          }
         }
-      }
 
-  //:::::: STATES ::::::
-  switch(state){
-    case 0: // Run inter-stimulus-interval
-      bgtimer(tISI);
-      transition(1);
-      break;
-    case 1: // Initiate odor delivery
-      counter = counter + 1; // Advance counter
-      if (counter == countmax){
-        counter = 1;
+    //:::::: STATES ::::::
+    switch(state){
+      case 0: // Run inter-stimulus-interval
+        bgtimer(tISI);
+        transition(1);
         break;
-      }
+      case 1: // Initiate odor delivery
+        counter = counter + 1; // Advance counter
+        if (counter == countmax){
+          counter = 1;
+          break;
+        }
 
-      // Set the next stimulus ID and pin vector
-      for (int i = 0; i < 2; i++){
-        digitalWrite(stimPins[i][counter],stimVal[stimPins[i+2][counter]]);
-        digitalWrite(stimPins[i][defaultStim],LOW);
-      }
-      bgtimer(tStim);
-      transition(2);
-      break;
-    case 2: // Initiate odor delivery
-      // Reset the stimulus ID and pin vector
-      for (int i = 0; i < 2; i++){
-        digitalWrite(stimPins[i][counter],LOW);
-        digitalWrite(stimPins[i][defaultStim],stimVal[stimPins[i+2][defaultStim]]);
-      }
-      transition(0);
-      break;
-    default:
-      break;
+        // Set the next stimulus ID and pin vector
+        for (int i = 0; i < 2; i++){
+          digitalWrite(stimPins[i][counter],stimVal[stimPins[i+2][counter]]);
+          digitalWrite(stimPins[i][defaultStim],LOW);
+        }
+        bgtimer(tStim);
+        transition(2);
+        break;
+      case 2: // Initiate odor delivery
+        // Reset the stimulus ID and pin vector
+        for (int i = 0; i < 2; i++){
+          digitalWrite(stimPins[i][counter],LOW);
+          digitalWrite(stimPins[i][defaultStim],stimVal[stimPins[i+2][defaultStim]]);
+        }
+        transition(0);
+        break;
+      default:
+        break;
+    }
   }
 }
