@@ -6,9 +6,10 @@
 //..
 
 // -----Pin parameters-----
-int outPins[] = {11,12,13,14,15,16,17,18,19,20,21,22,23};
+int outPins[] = {11,12,13,14,15,16,17,18,19,20,21,22,23}; // According to how you wired up the thing
 
-// -----Valve configurations for 12 odor channels and 1 clean channel (first is clean)-----
+// -----Stimulus parameters-----
+// Valve configurations for 12 odor channels and 1 clean channel (first is clean)
 const int nStim = 12;
 int stimPins[4][nStim]; // Empty array to map pins to laters
 int odorPins[4][nStim] = {
@@ -17,10 +18,10 @@ int odorPins[4][nStim] = {
   {0,1,1,0,1,1,0,1,1, 0, 1, 1}, // Valve 1 value
   {1,0,1,1,0,1,1,0,1, 1, 0, 1}  // Valve 2 value
 };
-int stimVal[2] = {LOW,HIGH};
+int stimVal[2] = {LOW,HIGH}; // Pin write values
 
 int nPins = sizeof(outPins)/sizeof(outPins[0]);
-const int defaultStim = 1;
+const int defaultStim = 0; // All zeros will leave olfactometer in exhaust mode (no odors or clean channel)
 
 // -----Timer parameters-----
 unsigned long pTimer;
@@ -39,8 +40,8 @@ int counter = 1;
 int countmax = 0; // Change if you want another cycle than complete run through
 
 // -----Stimulus presentation time (ms)-----
-int unsigned tStim = 200;
-int unsigned tISI = 800;
+int unsigned tStim = 500;
+int unsigned tISI = 500;
 
 //..
 //..
@@ -52,13 +53,6 @@ int unsigned tISI = 800;
 void transition(int n){
   state = -1;     // Reset state to default
   nextstate = n;  // Advance state index
-}
-
-// f(output pin toggle)-----
-void output(int ppins[], int n, char direction){
-  for(int i = 0; i < n; i++){
-    digitalWrite(ppins[i], direction);
-  }
 }
 
 // f(background timer)-----
@@ -144,13 +138,13 @@ void loop() {
       case 1: // Initiate odor delivery
         counter = counter + 1; // Advance counter
         if (counter == countmax){
-          counter = 1;
+          counter = 1; // Reset to first stimulus (NOT 0th which is the default [clean air])
           break;
         }
 
         // Set the next stimulus ID and pin vector
         for (int i = 0; i < 2; i++){
-          digitalWrite(stimPins[i][counter],stimVal[stimPins[i+2][counter]]);
+          digitalWrite(stimPins[i][counter],stimVal[stimPins[i+2][counter]]); // TODO: NO idea if accessing LOW/HIGH from an array will work...
           digitalWrite(stimPins[i][defaultStim],LOW);
         }
         bgtimer(tStim);
