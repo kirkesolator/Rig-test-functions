@@ -33,22 +33,22 @@ void bgtimer(int tDur){
 
 // f(state transition)-----
 void transition(int n){
-  state = -1;     // Reset state to default
+  state = -1;     // Set initial state to default
   nextstate = n;  // Advance state index
 }
 
 
 //:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:SETUP:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:
 void setup() {
-  Serial.begin(9600);     // opens serial port, sets data rate to 9600 bps
-  pinMode(pinReward,OUTPUT); // Set pin to output
+  Serial.begin(9600);     // Open serial port, set data rate to 9600 bps
+  pinMode(pinReward,OUTPUT); // Set pins to output
 }
 
 //:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:LOOP:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:
 void loop() {
   // ........Serial communication..........
   if (Serial.available() > 0) {
-    // read the incoming byte:
+    // Read the incoming byte
     incomingByte = Serial.read();
 
     // Start/stop reward delivery via SPACE BAR

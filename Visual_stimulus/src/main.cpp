@@ -1,5 +1,4 @@
 #include <Arduino.h>
-
 // ::::::: PIN DEF :::::::::::::: PIN DEF :::::::::::::: PIN DEF :::::::::::::: PIN DEF :::::::::::::: PIN DEF :::::::
 // -----LED pins on board that controls the 9px TV. Make sure it's correct!-----
 const int pinsLED[9] = {11,12,13,14,15,16,17,18,19};
@@ -13,7 +12,7 @@ const int nStim = 9;
 // -----ITI-----
 const int tITI = 500;
 const int blockSize = 8;
-
+ 
 // -----Stimulus step time-----
 const int tS1 = 150;
 
