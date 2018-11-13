@@ -78,5 +78,8 @@ void loop() {
   for(int i = 0; i < sizeStim; i++){
     lcd.write(byte(charVec[counter % 2][i]));
   }
+  lcd.setCursor(cursorVec[1][counter]+2,!cursorVec[0][counter]);
+  lcd.write(byte(charVec[counter % 2][0]));
+  lcd.write(byte(charVec[counter % 2][5]));
   delay(500);
 }
