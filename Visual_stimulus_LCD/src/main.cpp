@@ -4,8 +4,13 @@
 // Initialize LCD object
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
-int sizeStim = 6;
+//..
+//..
+//:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-: VARIABLES :-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:
+//..
+//..
 
+int sizeStim = 6; 
 // Define custom character shapes
 byte full[8] = { // Full
   B11111,B11111,
@@ -38,16 +43,26 @@ byte ur[8] = { // Down to right
   B11111,B11111,
 };
 
+// Stimulus-character matrix 
 int charVec[2][6] = {
   {1,0,0,0,0,2},
   {3,0,0,0,0,4}
 };
+
+// Stimulus-cursor matrix 
 int cursorVec[2][6] = {
   {0,1, 0,1,0, 1},
   {0,5,10,0,5,10}
 };
 
+// Initilalize counter
 int counter = 0;
+
+//..
+//..
+//:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-: SETUP :-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:
+//..
+//..
 void setup() {
   // Create custom characters in the custom character slots 0-4
   lcd.createChar(0, full);
@@ -63,6 +78,11 @@ void setup() {
   Serial.begin(9600);
 }
 
+//..
+//..
+//:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-: LOOP :-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:
+//..
+//..
 void loop() {
   // Clear LCD
   lcd.clear();
