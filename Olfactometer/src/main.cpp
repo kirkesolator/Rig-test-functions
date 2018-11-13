@@ -37,7 +37,7 @@ const int bRate = 9600;
 int state = 0; // Starting state
 int nextstate;
 int counter = 1;
-int countmax = 0; // Change if you want another cycle than complete run through
+int countmax = nStim; // Change if you want another cycle than complete run through
 
 // -----Stimulus presentation time (ms)-----
 int unsigned tStim = 500;
@@ -49,29 +49,29 @@ int unsigned tISI = 500;
 //..
 //..
 
-// f(state transition)-----
+// 1. f(state transition)-----
 void transition(int n){
   state = -1;     // Reset state to default
   nextstate = n;  // Advance state index
 }
 
-// f(background timer)-----
+// 2. f(background timer)-----
 void bgtimer(int tDur){
   doTime = true;
   pTimer = millis();
   tTimer = tDur;
 }
 
-// f(pinmodes)-----
+// 3. f(pinmodes)-----
 void pinout(int outPins[], int nPins){
   for (int i = 0; i <= nPins; i++){
     pinMode(outPins[i],OUTPUT);
   }
 }
 
-// f(map stimulus vector to output pins)
+// 4. f(map stimulus vector to output pins)
 void mapoutpins(int outPins[],int stimPins[4][nStim],int odorPins[4][nStim],int nStim){
-   for(int j = 0; j < 2; j++){
+  for(int j = 0; j < 2; j++){
     for (int i = 0; i <= nStim; i++){
       stimPins[j][i] = outPins[odorPins[j][i]];
     }
@@ -136,21 +136,22 @@ void loop() {
         bgtimer(tISI);
         transition(1);
         break;
+
       case 1: // Initiate odor delivery
         counter = counter + 1; // Advance counter
         if (counter == countmax){
           counter = 1; // Reset to first stimulus (NOT 0th which is the default [clean air])
           break;
         }
-
         // Set the next stimulus ID and pin vector
         for (int i = 0; i < 2; i++){
-          digitalWrite(stimPins[i][counter],stimVal[stimPins[i+2][counter]]); // TODO: NO idea if accessing LOW/HIGH from an array will work...
+          digitalWrite(stimPins[i][counter],stimVal[stimPins[i+2][counter]]); // 
           digitalWrite(stimPins[i][defaultStim],LOW);
         }
         bgtimer(tStim);
         transition(2);
         break;
+
       case 2: // Initiate odor delivery
         // Reset the stimulus ID and pin vector
         for (int i = 0; i < 2; i++){
@@ -159,7 +160,8 @@ void loop() {
         }
         transition(0);
         break;
-      default:
+
+      default: // Includes of course -1 which is the inactive state the transition function uses 
         break;
     }
   }
