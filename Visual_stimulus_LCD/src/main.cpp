@@ -1,3 +1,8 @@
+//..
+//..
+//:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-: LIBRARIES :-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:
+//..
+//..
 #include <Arduino.h>
 #include <LiquidCrystal.h>
 
@@ -101,5 +106,7 @@ void loop() {
   lcd.setCursor(cursorVec[1][counter]+2,!cursorVec[0][counter]);
   lcd.write(byte(charVec[counter % 2][0]));
   lcd.write(byte(charVec[counter % 2][5]));
+  Serial.print("Counter: ");
+  Serial.println(counter);
   delay(500);
 }
