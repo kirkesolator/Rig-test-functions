@@ -48,6 +48,9 @@ void setup() {
 void loop() {
   // ........Serial communication..........
   if (Serial.available() > 0) {
+    // FIX BUG TOOOR
+    digitalWrite(pinReward,LOW); // @megha, does this do it?
+
     // Read the incoming byte
     incomingByte = Serial.read();
 
